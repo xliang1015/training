@@ -137,7 +137,7 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 	return ret;
 }
 
-static ssize_t globalfifo_write(struct file *filp, const char __user * buf,
+static ssize_t globalfifo_write(struct file *filp, const char __user *buf,
 				size_t count, loff_t *ppos)
 {
 	struct globalfifo_dev *dev = filp->private_data;
