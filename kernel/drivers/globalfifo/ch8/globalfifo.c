@@ -50,10 +50,10 @@ static long globalfifo_ioctl(struct file *filp, unsigned int cmd,
 
 	switch (cmd) {
 	case FIFO_CLEAR:
-		mutex_lock(&dev->mutex);;
+		mutex_lock(&dev->mutex);
 		dev->current_len = 0;
 		memset(dev->mem, 0, GLOBALFIFO_SIZE);
-		mutex_unlock(&dev->mutex);;
+		mutex_unlock(&dev->mutex);
 
 		printk(KERN_INFO "globalfifo is set to zero\n");
 		break;
@@ -69,7 +69,7 @@ static unsigned int globalfifo_poll(struct file *filp, poll_table * wait)
 	unsigned int mask = 0;
 	struct globalfifo_dev *dev = filp->private_data;
 
-	mutex_lock(&dev->mutex);;
+	mutex_lock(&dev->mutex);
 
 	poll_wait(filp, &dev->r_wait, wait);
 	poll_wait(filp, &dev->w_wait, wait);
@@ -82,7 +82,7 @@ static unsigned int globalfifo_poll(struct file *filp, poll_table * wait)
 		mask |= POLLOUT | POLLWRNORM;
 	}
 
-	mutex_unlock(&dev->mutex);;
+	mutex_unlock(&dev->mutex);
 	return mask;
 }
 
@@ -93,7 +93,7 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 	struct globalfifo_dev *dev = filp->private_data;
 	DECLARE_WAITQUEUE(wait, current);
 
-	mutex_lock(&dev->mutex);;
+	mutex_lock(&dev->mutex);
 	add_wait_queue(&dev->r_wait, &wait);
 
 	while (dev->current_len == 0) {
@@ -102,7 +102,7 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 			goto out;
 		}
 		__set_current_state(TASK_INTERRUPTIBLE);
-		mutex_unlock(&dev->mutex);;
+		mutex_unlock(&dev->mutex);
 
 		schedule();
 		if (signal_pending(current)) {
@@ -110,7 +110,7 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 			goto out2;
 		}
 
-		mutex_lock(&dev->mutex);;
+		mutex_lock(&dev->mutex);
 	}
 
 	if (count > dev->current_len)
@@ -130,7 +130,7 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 		ret = count;
 	}
  out:
-	mutex_unlock(&dev->mutex);;
+	mutex_unlock(&dev->mutex);
  out2:
 	remove_wait_queue(&dev->w_wait, &wait);
 	set_current_state(TASK_RUNNING);
@@ -144,7 +144,7 @@ static ssize_t globalfifo_write(struct file *filp, const char __user * buf,
 	int ret;
 	DECLARE_WAITQUEUE(wait, current);
 
-	mutex_lock(&dev->mutex);;
+	mutex_lock(&dev->mutex);
 	add_wait_queue(&dev->w_wait, &wait);
 
 	while (dev->current_len == GLOBALFIFO_SIZE) {
@@ -154,7 +154,7 @@ static ssize_t globalfifo_write(struct file *filp, const char __user * buf,
 		}
 		__set_current_state(TASK_INTERRUPTIBLE);
 
-		mutex_unlock(&dev->mutex);;
+		mutex_unlock(&dev->mutex);
 
 		schedule();
 		if (signal_pending(current)) {
@@ -162,7 +162,7 @@ static ssize_t globalfifo_write(struct file *filp, const char __user * buf,
 			goto out2;
 		}
 
-		mutex_lock(&dev->mutex);;
+		mutex_lock(&dev->mutex);
 	}
 
 	if (count > GLOBALFIFO_SIZE - dev->current_len)
@@ -182,7 +182,7 @@ static ssize_t globalfifo_write(struct file *filp, const char __user * buf,
 	}
 
  out:
-	mutex_unlock(&dev->mutex);;
+	mutex_unlock(&dev->mutex);
  out2:
 	remove_wait_queue(&dev->w_wait, &wait);
 	set_current_state(TASK_RUNNING);
