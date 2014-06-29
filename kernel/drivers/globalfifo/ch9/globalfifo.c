@@ -47,7 +47,7 @@ static int globalfifo_open(struct inode *inode, struct file *filp)
 
 static int globalfifo_release(struct inode *inode, struct file *filp)
 {
-	globalfifo_fasync( - 1, filp, 0);
+	globalfifo_fasync(-1, filp, 0);
 	return 0;
 }
 
