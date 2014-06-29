@@ -1,1 +1,0 @@
-cmd_/home/barry/training/kernel/drivers/param/book.ko := ld -r -m elf_i386 -T /usr/src/linux-headers-3.8.0-39-generic/scripts/module-common.lds --build-id  -o /home/barry/training/kernel/drivers/param/book.ko /home/barry/training/kernel/drivers/param/book.o /home/barry/training/kernel/drivers/param/book.mod.o

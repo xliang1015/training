@@ -1,34 +1,35 @@
 /*
- * A kernel module: book
- * This example is to introduce module params
+ * a simple kernel module supporting parameters
  *
- * The initial developer of the original code is Baohua Song
- * <author@linuxdriver.cn>. All Rights Reserved.
+ * Copyright (C) 2014 Barry Song  (baohua@kernel.org)
+ *
+ * Licensed under GPLv2 or later.
  */
 
 #include <linux/init.h>
 #include <linux/module.h>
 
 static char *book_name = "dissecting Linux Device Driver";
-static int num = 4000;
+module_param(book_name, charp, S_IRUGO);
 
-static int book_init(void)
+static int num = 4000;
+module_param(num, int, S_IRUGO);
+
+static int __init book_init(void)
 {
 	printk(KERN_INFO " book name:%s\n",book_name);
 	printk(KERN_INFO " book num:%d\n",num);
 	return 0;
 }
-static void book_exit(void)
+module_init(book_init);
+
+static void __exit book_exit(void)
 {
 	printk(KERN_INFO " Book module exit\n ");
 }
-module_init(book_init);
 module_exit(book_exit);
 
-module_param(num, int, S_IRUGO);
-module_param(book_name, charp, S_IRUGO);
-
-MODULE_AUTHOR("Song Baohua, author@linuxdriver.cn");
-MODULE_LICENSE("Dual BSD/GPL");
+MODULE_AUTHOR("Barry Song <baohua@kernel.org>");
+MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("A simple Module for testing module params");
 MODULE_VERSION("V1.0");
