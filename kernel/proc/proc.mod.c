@@ -23,7 +23,6 @@ __attribute__((section("__versions"))) = {
 	{ 0x44828907, "proc_mkdir" },
 	{ 0x91715312, "sprintf" },
 	{ 0x20000329, "simple_strtoul" },
-	{ 0x50eedeb8, "printk" },
 	{ 0xb4390f9a, "mcount" },
 };
 
@@ -33,4 +32,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "C04A8982FD86E850F2F8739");
+MODULE_INFO(srcversion, "1CB1B0D439001E11EA5D6E1");

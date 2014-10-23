@@ -60,6 +60,7 @@ int main(void)
 	}
 
 	while(1);
+
 #if 1
 	if(pthread_join(tid1,NULL)!=0){
 		perror("call pthread_join function fail");

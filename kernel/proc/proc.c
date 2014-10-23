@@ -13,7 +13,7 @@ static int test_proc_read(char *buf, char **start, off_t off, int count,
 		int *eof, void *data)
 {
 	unsigned int *ptr_var = data;
-	return sprintf(buf, "%u\n", *ptr_var);
+	return sprintf(buf, "test_rw = %u\n", *ptr_var);
 }
 
 static int test_proc_write(struct file *file, const char *buffer,

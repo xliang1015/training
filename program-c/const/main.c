@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-const int g;
+const int g =2;
 
 extern void add_g(void);
 

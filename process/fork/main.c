@@ -2,7 +2,7 @@ main()
 {
 	fork();
 	printf("hello\n");
-	fork();
+	fork();	
 	printf("hello\n");
 	while(1);
 }

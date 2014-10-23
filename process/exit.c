@@ -18,11 +18,11 @@ int main(){
 		return EXIT_FAILURE;
 	}
 
-//	exit(0);
+///	exit(0);
 //	_exit(0);
 	
 	if(fork() >0)
 		exit(EXIT_SUCCESS);
 	else
-		exit(1);
+		_exit(1);
 }
