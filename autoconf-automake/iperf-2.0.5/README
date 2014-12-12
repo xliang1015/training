@@ -16,4 +16,7 @@ The Board of Trustees of the University of Illinois
 All rights reserved
 See UI License (doc/ui_license.html) for complete details.
 
+For ARM:
+./configure --host=arm-linux-gnueabi  ac_cv_func_malloc_0_nonnull=yes ac_cv_func_malloc_0_nonnull=yes
+
 $Id: README,v 1.1.1.1 2004/05/18 01:50:44 kgibbs Exp $
