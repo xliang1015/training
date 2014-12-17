@@ -3,7 +3,8 @@
 (1)gdb attach pid
 (2)gdb tui
 (3)gdb call functions
-(4)gdb debug multithreads
+(4)gdb debug multithreads:
+	training/thread/thread_life.c
 (5)ddd
 3. coredump:
 training/debug/core-dump

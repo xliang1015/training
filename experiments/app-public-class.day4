@@ -20,5 +20,8 @@ compare 1 and 2
 #free
 compare the output of the two free
 
-4. run top, iostat and iotop
+4. smem
+
+5. valgrind
+run: training/memory_check/valgrind
 
