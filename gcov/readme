@@ -3,3 +3,9 @@ run ./a.out
 gcov test.c
 read:
 test.c.gcov
+
+lcov:
+lcov --capture --directory . --output-file test.info --test-name test
+
+html:
+genhtml test.info --output-directory output --title "a simple test" --show-details --legend
