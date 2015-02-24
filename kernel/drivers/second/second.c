@@ -1,137 +1,120 @@
 #include <linux/module.h>
-#include <linux/types.h>
 #include <linux/fs.h>
-#include <linux/errno.h>
 #include <linux/mm.h>
-#include <linux/sched.h>
 #include <linux/init.h>
 #include <linux/cdev.h>
 #include <linux/slab.h>
-#include <asm/io.h>
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
-#define SECOND_MAJOR 248    /*‘§…Ëµƒsecondµƒ÷˜…Ë±∏∫≈*/                       
-                                                                             
-static int second_major = SECOND_MAJOR;                                      
-                                                                             
-/*second…Ë±∏Ω·ππÃÂ*/                                                         
-struct second_dev {                                                          
-  struct cdev cdev; /*cdevΩ·ππÃÂ*/                                           
-  atomic_t counter;/* “ªπ≤æ≠¿˙¡À∂‡…Ÿ√Î£ø*/                                   
-  struct timer_list s_timer; /*…Ë±∏“™ π”√µƒ∂® ±∆˜*/                          
-};                                                                           
-                                                                             
-struct second_dev *second_devp; /*…Ë±∏Ω·ππÃÂ÷∏’Î*/                           
-                                                                             
-/*∂® ±∆˜¥¶¿Ì∫Ø ˝*/                                                           
-static void second_timer_handle(unsigned long arg)                           
-{                                                                            
-  mod_timer(&second_devp->s_timer,jiffies + HZ);                             
-  atomic_inc(&second_devp->counter);                                         
-                                                                             
-  printk(KERN_NOTICE "current jiffies is %ld\n", jiffies);                   
-}                                                                            
-                                                                             
-/*Œƒº˛¥Úø™∫Ø ˝*/                                                             
-int second_open(struct inode *inode, struct file *filp)                      
-{                                                                            
-  /*≥ı ºªØ∂® ±∆˜*/                                                           
-  init_timer(&second_devp->s_timer);                                         
-  second_devp->s_timer.function = &second_timer_handle;                      
-  second_devp->s_timer.expires = jiffies + HZ;                               
-                                                                             
-  add_timer(&second_devp->s_timer); /*ÃÌº”£®◊¢≤·£©∂® ±∆˜*/                   
-                                                                             
-  atomic_set(&second_devp->counter,0); //º∆ ˝«Â0                             
-                                                                             
-  return 0;                                                                  
-}                                                                            
-/*Œƒº˛ Õ∑≈∫Ø ˝*/                                                             
-int second_release(struct inode *inode, struct file *filp)                   
-{                                                                            
-  del_timer(&second_devp->s_timer);                                          
-                                                                             
-  return 0;                                                                  
-}                                                                            
-                                                                             
-/*∂¡∫Ø ˝*/                                                                   
-static ssize_t second_read(struct file *filp, char __user *buf, size_t count,
-  loff_t *ppos)                                                              
-{                                                                            
-  int counter;                                                               
-                                                                             
-  counter = atomic_read(&second_devp->counter);                              
-  if(put_user(counter, (int*)buf))                                           
-  	return - EFAULT;                                                         
-  else                                                                       
-  	return sizeof(unsigned int);                                             
-}                                                                            
-                                                                             
-/*Œƒº˛≤Ÿ◊˜Ω·ππÃÂ*/                                                           
-static const struct file_operations second_fops = {                          
-  .owner = THIS_MODULE,                                                      
-  .open = second_open,                                                       
-  .release = second_release,                                                 
-  .read = second_read,                                                       
-};                                                                           
-                                                                             
-/*≥ı ºªØ≤¢◊¢≤·cdev*/                                                         
-static void second_setup_cdev(struct second_dev *dev, int index)             
-{                                                                            
-  int err, devno = MKDEV(second_major, index);                               
-                                                                             
-  cdev_init(&dev->cdev, &second_fops);                                       
-  dev->cdev.owner = THIS_MODULE;                                             
-  err = cdev_add(&dev->cdev, devno, 1);                                      
-  if (err)                                                                   
-    printk(KERN_NOTICE "Error %d adding LED%d", err, index);                 
-}                                                                            
-                                                                             
-/*…Ë±∏«˝∂Øƒ£øÈº”‘ÿ∫Ø ˝*/                                                     
-int second_init(void)                                                        
-{                                                                            
-  int ret;                                                                   
-  dev_t devno = MKDEV(second_major, 0);                                      
-                                                                             
-  /* …Í«Î…Ë±∏∫≈*/                                                            
-  if (second_major)                                                          
-    ret = register_chrdev_region(devno, 1, "second");                        
-  else { /* ∂ØÃ¨…Í«Î…Ë±∏∫≈ */                                                
-    ret = alloc_chrdev_region(&devno, 0, 1, "second");                       
-    second_major = MAJOR(devno);                                             
-  }                                                                          
-  if (ret < 0)                                                               
-    return ret;                                                              
-  /* ∂ØÃ¨…Í«Î…Ë±∏Ω·ππÃÂµƒƒ⁄¥Ê*/                                              
-  second_devp = kmalloc(sizeof(struct second_dev), GFP_KERNEL);              
-  if (!second_devp) {   /*…Í«Î ß∞‹*/                                         
-    ret =  - ENOMEM;                                                         
-    goto fail_malloc;                                                        
-  }                                                                          
+#define SECOND_MAJOR 248
 
-  memset(second_devp, 0, sizeof(struct second_dev));                         
+static int second_major = SECOND_MAJOR;
+module_param(second_major, int, S_IRUGO);
 
-  second_setup_cdev(second_devp, 0);                                         
+struct second_dev {
+	struct cdev cdev;
+	atomic_t counter;
+	struct timer_list s_timer;
+};
 
-  return 0;                                                                  
+static struct second_dev *second_devp;
+
+static void second_timer_handler(unsigned long arg)
+{
+	mod_timer(&second_devp->s_timer, jiffies + HZ); /* Ëß¶Âèë‰∏ã‰∏ÄÊ¨°ÂÆöÊó∂ */
+	atomic_inc(&second_devp->counter); /* Â¢ûÂä†ÁßíËÆ°Êï∞ */
+
+	printk(KERN_INFO "current jiffies is %ld\n", jiffies);
+}
+
+static int second_open(struct inode *inode, struct file *filp)
+{
+	init_timer(&second_devp->s_timer);
+	second_devp->s_timer.function = &second_timer_handler;
+	second_devp->s_timer.expires = jiffies + HZ;
+
+	add_timer(&second_devp->s_timer);
+
+	atomic_set(&second_devp->counter, 0);  /* ÂàùÂßãÂåñÁßíËÆ°Êï∞‰∏∫0 */                   
+
+	return 0;
+}
+
+static int second_release(struct inode *inode, struct file *filp)
+{
+	del_timer(&second_devp->s_timer);
+
+	return 0;
+}
+
+static ssize_t second_read(struct file *filp, char __user * buf, size_t count,
+	loff_t * ppos)
+{
+	int counter;
+
+	counter = atomic_read(&second_devp->counter);
+	if (put_user(counter, (int *)buf)) /* Êã∑Ë¥ùcounterÂà∞userspace */
+		return -EFAULT;
+	else
+		return sizeof(unsigned int);
+}
+
+static const struct file_operations second_fops = {
+	.owner = THIS_MODULE,
+	.open = second_open,
+	.release = second_release,
+	.read = second_read,
+};
+
+static void second_setup_cdev(struct second_dev *dev, int index)
+{
+	int err, devno = MKDEV(second_major, index);
+
+	cdev_init(&dev->cdev, &second_fops);
+	dev->cdev.owner = THIS_MODULE;
+	err = cdev_add(&dev->cdev, devno, 1);
+	if (err)
+		printk(KERN_ERR "Failed to add second device\n");
+}
+
+static int __init second_init(void)
+{
+	int ret;
+	dev_t devno = MKDEV(second_major, 0);
+
+	if (second_major)
+		ret = register_chrdev_region(devno, 1, "second");
+	else {		
+		ret = alloc_chrdev_region(&devno, 0, 1, "second");
+		second_major = MAJOR(devno);
+	}
+	if (ret < 0)
+		return ret;
+
+	second_devp = kzalloc(sizeof(*second_devp), GFP_KERNEL);
+	if (!second_devp) {
+		ret = -ENOMEM;
+		goto fail_malloc;
+	}
+
+	second_setup_cdev(second_devp, 0);
+
+	return 0;
 
 fail_malloc:
-  unregister_chrdev_region(devno, 1);
-  return ret;                           
-}                                                                            
+	unregister_chrdev_region(devno, 1);
+	return ret;
+}
+module_init(second_init);
 
-/*ƒ£øÈ–∂‘ÿ∫Ø ˝*/                                                             
-void second_exit(void)                                                       
-{                                                                            
-  cdev_del(&second_devp->cdev);   /*◊¢œ˙cdev*/                               
-  kfree(second_devp);     /* Õ∑≈…Ë±∏Ω·ππÃÂƒ⁄¥Ê*/                             
-  unregister_chrdev_region(MKDEV(second_major, 0), 1); /* Õ∑≈…Ë±∏∫≈*/        
-}                                                                            
-                                                                             
-MODULE_AUTHOR("Barry Song <21cnbao@gmail.com>");                             
-MODULE_LICENSE("Dual BSD/GPL");                                              
-                                                                             
-module_param(second_major, int, S_IRUGO);                                    
-                                                                             
-module_init(second_init);                                                    
-module_exit(second_exit);                                                    
+static void __exit second_exit(void)
+{
+	cdev_del(&second_devp->cdev);	
+	kfree(second_devp);	
+	unregister_chrdev_region(MKDEV(second_major, 0), 1);
+}
+module_exit(second_exit);
+
+MODULE_AUTHOR("Barry Song <21cnbao@gmail.com>");
+MODULE_LICENSE("GPL v2"); 
+
