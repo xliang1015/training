@@ -15,7 +15,7 @@
 
 #define GLOBALMEM_SIZE	0x1000
 #define MEM_CLEAR 0x1
-#define GLOBALMEM_MAJOR 250
+#define GLOBALMEM_MAJOR 230
 
 static int globalmem_major = GLOBALMEM_MAJOR;
 module_param(globalmem_major, int, S_IRUGO);
