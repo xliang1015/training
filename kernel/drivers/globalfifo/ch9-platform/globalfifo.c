@@ -17,7 +17,7 @@
 
 #define GLOBALFIFO_SIZE	0x1000
 #define FIFO_CLEAR 0x1
-#define GLOBALFIFO_MAJOR 249
+#define GLOBALFIFO_MAJOR 231
 
 static int globalfifo_major = GLOBALFIFO_MAJOR;
 module_param(globalfifo_major, int, S_IRUGO);
@@ -105,7 +105,7 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 	mutex_lock(&dev->mutex);
 	add_wait_queue(&dev->r_wait, &wait);
 
-	if (dev->current_len == 0) {
+	while (dev->current_len == 0) {
 		if (filp->f_flags & O_NONBLOCK) {
 			ret = -EAGAIN;
 			goto out;
