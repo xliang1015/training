@@ -24,6 +24,8 @@ static void modify_book(void)
 		bk.year = i;
 		bk.price = i;
 		i++;
+		printf("%d\n", i);
+		sleep(1);
 	};
 }
 
