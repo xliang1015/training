@@ -70,7 +70,6 @@ static int vmem_disk_xfer_bio(struct vmem_disk_dev *dev, struct bio *bio)
         struct bvec_iter iter;
         sector_t sector = bio->bi_iter.bi_sector;
 
-	/* Do each segment independently. */
 	bio_for_each_segment(bvec, bio, iter) {
 		char *buffer = __bio_kmap_atomic(bio, iter);
 		vmem_disk_transfer(dev, sector, bio_cur_bytes(bio) >> 9,
@@ -78,11 +77,11 @@ static int vmem_disk_xfer_bio(struct vmem_disk_dev *dev, struct bio *bio)
 		sector += bio_cur_bytes(bio) >> 9;
 		__bio_kunmap_atomic(buffer);
 	}
-	return 0; /* Always "succeed" */
+	return 0;
 }
 
 /*
- * The simple form of the request function.
+ * The request_queue version.
  */
 static void vmem_disk_request(struct request_queue *q)
 {
@@ -118,11 +117,6 @@ static void vmem_disk_make_request(struct request_queue *q, struct bio *bio)
 	bio_endio(bio, status);
 }
 
-
-/*
- * The ioctl() implementation
- */
-
 static int vmem_disk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
 {
 	long size;
@@ -144,15 +138,8 @@ static struct block_device_operations vmem_disk_ops = {
 	.getgeo          = vmem_disk_getgeo,
 };
 
-
-/*
- * Set up our internal device.
- */
 static void setup_device(struct vmem_disk_dev *dev, int which)
 {
-	/*
-	 * Get some memory.
-	 */
 	memset (dev, 0, sizeof (struct vmem_disk_dev));
 	dev->size = NSECTORS*HARDSECT_SIZE;
 	dev->data = vmalloc(dev->size);
@@ -173,20 +160,17 @@ static void setup_device(struct vmem_disk_dev *dev, int which)
 			goto out_vfree;
 		blk_queue_make_request(dev->queue, vmem_disk_make_request);
 		break;
+	default:
+		printk(KERN_NOTICE "Bad request mode %d, using simple\n", request_mode);
 	case VMEMD_QUEUE:
 		dev->queue = blk_init_queue(vmem_disk_request, &dev->lock);
 		if (dev->queue == NULL)
 			goto out_vfree;
 		break;
-	default:
-		printk(KERN_NOTICE "Bad request mode %d, using simple\n", request_mode);
-		/* fall into.. */
 	}
 	blk_queue_logical_block_size(dev->queue, HARDSECT_SIZE);
 	dev->queue->queuedata = dev;
-	/*
-	 * And the gendisk structure.
-	 */
+
 	dev->gd = alloc_disk(VMEM_DISK_MINORS);
 	if (!dev->gd) {
 		printk (KERN_NOTICE "alloc_disk failure\n");
@@ -211,17 +195,13 @@ out_vfree:
 static int __init vmem_disk_init(void)
 {
 	int i;
-	/*
-	 * Get registered.
-	 */
+
 	vmem_disk_major = register_blkdev(vmem_disk_major, "vmem_disk");
 	if (vmem_disk_major <= 0) {
 		printk(KERN_WARNING "vmem_disk: unable to get major number\n");
 		return -EBUSY;
 	}
-	/*
-	 * Allocate the device array, and initialize each one.
-	 */
+
 	devices = kmalloc(NDEVICES*sizeof (struct vmem_disk_dev), GFP_KERNEL);
 	if (!devices)
 		goto out_unregister;
@@ -250,7 +230,6 @@ static void vmem_disk_exit(void)
 		if (dev->queue) {
 			if (request_mode == VMEMD_NOQUEUE)
 				kobject_put (&dev->queue->kobj);
-			/* blk_put_queue() is no longer an exported symbol */
 			else
 				blk_cleanup_queue(dev->queue);
 		}
