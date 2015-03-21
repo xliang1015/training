@@ -14,13 +14,12 @@
 #include <linux/slab.h>
 #include <linux/poll.h>
 #include <linux/platform_device.h>
+#include <linux/miscdevice.h>
+#include <linux/of_device.h>
 
 #define GLOBALFIFO_SIZE	0x1000
 #define FIFO_CLEAR 0x1
 #define GLOBALFIFO_MAJOR 231
-
-static int globalfifo_major = GLOBALFIFO_MAJOR;
-module_param(globalfifo_major, int, S_IRUGO);
 
 struct globalfifo_dev {
 	struct cdev cdev;
@@ -30,6 +29,7 @@ struct globalfifo_dev {
 	wait_queue_head_t r_wait;
 	wait_queue_head_t w_wait;
 	struct fasync_struct *async_queue;
+	bool dev_released;
 };
 
 struct globalfifo_dev *globalfifo_devp;
@@ -119,6 +119,8 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 			goto out2;
 		}
 
+		if (dev->dev_released)
+			return -ENODEV;
 		mutex_lock(&dev->mutex);
 	}
 
@@ -171,6 +173,9 @@ static ssize_t globalfifo_write(struct file *filp, const char __user *buf,
 			goto out2;
 		}
 
+		if (dev->dev_released)
+			return -ENODEV;
+
 		mutex_lock(&dev->mutex);
 	}
 
@@ -214,28 +219,24 @@ static const struct file_operations globalfifo_fops = {
 	.release = globalfifo_release,
 };
 
-static void globalfifo_setup_cdev(struct globalfifo_dev *dev, int index)
-{
-	int err, devno = MKDEV(globalfifo_major, index);
+static struct miscdevice globalfifo_misc = {
+	.minor          = MISC_DYNAMIC_MINOR,
+	.name           = "globalfifo",
+	.fops           = &globalfifo_fops,
+};
 
-	cdev_init(&dev->cdev, &globalfifo_fops);
-	dev->cdev.owner = THIS_MODULE;
-	err = cdev_add(&dev->cdev, devno, 1);
-	if (err)
-		printk(KERN_NOTICE "Error %d adding globalfifo%d", err, index);
+static void globalfifo_device_release(struct device *dev)
+{
+	globalfifo_devp->dev_released = true;
+	wake_up_interruptible(&globalfifo_devp->w_wait);
+	wake_up_interruptible(&globalfifo_devp->r_wait);
 }
 
 static int globalfifo_probe(struct platform_device *pdev)
 {
 	int ret;
-	dev_t devno = MKDEV(globalfifo_major, 0);
 
-	if (globalfifo_major)
-		ret = register_chrdev_region(devno, 1, "globalfifo");
-	else {
-		ret = alloc_chrdev_region(&devno, 0, 1, "globalfifo");
-		globalfifo_major = MAJOR(devno);
-	}
+	ret = misc_register(&globalfifo_misc);
 	if (ret < 0)
 		return ret;
 
@@ -245,23 +246,24 @@ static int globalfifo_probe(struct platform_device *pdev)
 		goto fail_malloc;
 	}
 
-	globalfifo_setup_cdev(globalfifo_devp, 0);
-
 	mutex_init(&globalfifo_devp->mutex);
 	init_waitqueue_head(&globalfifo_devp->r_wait);
 	init_waitqueue_head(&globalfifo_devp->w_wait);
 
+	pdev->dev.release = globalfifo_device_release;
+	dev_info(&pdev->dev, "globalfifo drv probed\n");
+
 	return 0;
 
 fail_malloc:
-	unregister_chrdev_region(devno, 1);
+	misc_deregister(&globalfifo_misc);
 	return ret;
 }
 
 static int globalfifo_remove(struct platform_device *pdev)
 {
-	cdev_del(&globalfifo_devp->cdev);
-	unregister_chrdev_region(MKDEV(globalfifo_major, 0), 1);
+	misc_deregister(&globalfifo_misc);
+	dev_info(&pdev->dev, "globalfifo drv removed\n");
 
 	return 0;
 }
