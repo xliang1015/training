@@ -29,21 +29,20 @@ struct globalfifo_dev {
 	wait_queue_head_t r_wait;
 	wait_queue_head_t w_wait;
 	struct fasync_struct *async_queue;
-	bool dev_released;
+	struct miscdevice miscdev;
 };
-
-struct globalfifo_dev *globalfifo_devp;
 
 static int globalfifo_fasync(int fd, struct file *filp, int mode)
 {
-	struct globalfifo_dev *dev = filp->private_data;
+	struct globalfifo_dev *dev = container_of(filp->private_data,
+		struct globalfifo_dev, miscdev);
+
 	return fasync_helper(fd, filp, mode, &dev->async_queue);
 }
 
 static int globalfifo_open(struct inode *inode, struct file *filp)
 {
-	filp->private_data = globalfifo_devp;
-	return 0;
+       return 0;
 }
 
 static int globalfifo_release(struct inode *inode, struct file *filp)
@@ -55,7 +54,8 @@ static int globalfifo_release(struct inode *inode, struct file *filp)
 static long globalfifo_ioctl(struct file *filp, unsigned int cmd,
 			     unsigned long arg)
 {
-	struct globalfifo_dev *dev = filp->private_data;
+	struct globalfifo_dev *dev = container_of(filp->private_data,
+		struct globalfifo_dev, miscdev);
 
 	switch (cmd) {
 	case FIFO_CLEAR:
@@ -76,7 +76,8 @@ static long globalfifo_ioctl(struct file *filp, unsigned int cmd,
 static unsigned int globalfifo_poll(struct file *filp, poll_table * wait)
 {
 	unsigned int mask = 0;
-	struct globalfifo_dev *dev = filp->private_data;
+	struct globalfifo_dev *dev = container_of(filp->private_data,
+		struct globalfifo_dev, miscdev);
 
 	mutex_lock(&dev->mutex);
 
@@ -99,7 +100,9 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 			       size_t count, loff_t *ppos)
 {
 	int ret;
-	struct globalfifo_dev *dev = filp->private_data;
+	struct globalfifo_dev *dev = container_of(filp->private_data,
+		struct globalfifo_dev, miscdev);
+
 	DECLARE_WAITQUEUE(wait, current);
 
 	mutex_lock(&dev->mutex);
@@ -119,8 +122,6 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 			goto out2;
 		}
 
-		if (dev->dev_released)
-			return -ENODEV;
 		mutex_lock(&dev->mutex);
 	}
 
@@ -151,7 +152,9 @@ static ssize_t globalfifo_read(struct file *filp, char __user *buf,
 static ssize_t globalfifo_write(struct file *filp, const char __user *buf,
 				size_t count, loff_t *ppos)
 {
-	struct globalfifo_dev *dev = filp->private_data;
+	struct globalfifo_dev *dev = container_of(filp->private_data,
+		struct globalfifo_dev, miscdev);
+
 	int ret;
 	DECLARE_WAITQUEUE(wait, current);
 
@@ -172,9 +175,6 @@ static ssize_t globalfifo_write(struct file *filp, const char __user *buf,
 			ret = -ERESTARTSYS;
 			goto out2;
 		}
-
-		if (dev->dev_released)
-			return -ENODEV;
 
 		mutex_lock(&dev->mutex);
 	}
@@ -219,52 +219,40 @@ static const struct file_operations globalfifo_fops = {
 	.release = globalfifo_release,
 };
 
-static struct miscdevice globalfifo_misc = {
-	.minor          = MISC_DYNAMIC_MINOR,
-	.name           = "globalfifo",
-	.fops           = &globalfifo_fops,
-};
-
-static void globalfifo_device_release(struct device *dev)
-{
-	globalfifo_devp->dev_released = true;
-	wake_up_interruptible(&globalfifo_devp->w_wait);
-	wake_up_interruptible(&globalfifo_devp->r_wait);
-}
-
 static int globalfifo_probe(struct platform_device *pdev)
 {
+	struct globalfifo_dev *gl;
 	int ret;
 
-	ret = misc_register(&globalfifo_misc);
+	gl = devm_kzalloc(&pdev->dev, sizeof(*gl), GFP_KERNEL);
+	if (!gl)
+		return -ENOMEM;
+	gl->miscdev.minor = MISC_DYNAMIC_MINOR;
+	gl->miscdev.name = "globalfifo";
+	gl->miscdev.fops = &globalfifo_fops;
+
+	mutex_init(&gl->mutex);
+	init_waitqueue_head(&gl->r_wait);
+	init_waitqueue_head(&gl->w_wait);
+	platform_set_drvdata(pdev, gl);
+
+	ret = misc_register(&gl->miscdev);
 	if (ret < 0)
-		return ret;
+		goto err;
 
-	globalfifo_devp = devm_kzalloc(&pdev->dev, sizeof(*globalfifo_devp), GFP_KERNEL);
-	if (!globalfifo_devp) {
-		ret = -ENOMEM;
-		goto fail_malloc;
-	}
-
-	mutex_init(&globalfifo_devp->mutex);
-	init_waitqueue_head(&globalfifo_devp->r_wait);
-	init_waitqueue_head(&globalfifo_devp->w_wait);
-
-	pdev->dev.release = globalfifo_device_release;
 	dev_info(&pdev->dev, "globalfifo drv probed\n");
-
 	return 0;
-
-fail_malloc:
-	misc_deregister(&globalfifo_misc);
+err:
 	return ret;
 }
 
 static int globalfifo_remove(struct platform_device *pdev)
 {
-	misc_deregister(&globalfifo_misc);
-	dev_info(&pdev->dev, "globalfifo drv removed\n");
+	struct globalfifo_dev *gl = platform_get_drvdata(pdev);
 
+	misc_deregister(&gl->miscdev);
+
+	dev_info(&pdev->dev, "globalfifo drv removed\n");
 	return 0;
 }
 
