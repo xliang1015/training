@@ -4,7 +4,7 @@ symbol: var.o main.o
 ref-s: single-multithrad.o
 	gcc -o ref-s single-multithrad.o
 ref-m: single-multithrad.o
-	gcc -o ref-m  single-multithrad.o -lpthread
+	gcc -o ref-m  single-multithrad.o -pthread
 ref-w: test.o simple.o
 	gcc -o ref-w test.o simple.o
 clean:
