@@ -1,6 +1,7 @@
 1. strace/ltrace
 2. gdb:
 training/debug/gdb
+~/develop/training/debug/gdb
 (1)gdb attach pid
 (2)gdb tui
 (3)gdb call functions
