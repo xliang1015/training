@@ -1,9 +1,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <sys/mman.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <stdio.h>
 
-main()
+int main(int argc, char **argv)
 {
 	volatile unsigned char *m;
 	/* 
@@ -16,6 +18,11 @@ main()
 	m = mmap(0, MAP_SIZE, PROT_READ | PROT_EXEC,
 			MAP_PRIVATE, fd, 0);
 
+	if (m == MAP_FAILED) {
+		perror("mmap /dev/sda failed\n");
+		exit(-1);
+	}
+
 	sleep(1);
 #if 1
 	/* 
@@ -27,8 +34,7 @@ main()
 	printf("memory base:%p\n", m);
 
 	for (i = 0 ; i < MAP_SIZE; i++)
-		m[i];
+		(void)m[i];
 
-	while (1)
-		sleep(1);
+	pause();
 }
