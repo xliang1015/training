@@ -2,19 +2,22 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	int max = -1;
 	int mb = 0;
-	char* buffer;
+	char *buffer;
 	int i;
 
-	unsigned int *p=malloc(1024*1024*800);
+	unsigned int *p = malloc(1024 * 1024 * 2000);
 
-	printf("%p\n", p);
+	printf("malloc buffer: %p\n", p);
 
-	for(i=0;i<1024*1024*200;i++)
+	for (i = 0; i < 1024 * 1024 * 500; i++) {
 		p[i] = 123;
-
+		if ((i & 0xFFFFF) == 0)
+			printf("%dMB written\n", i >> 18);
+	}
+	pause();
 	return 0;
 }
