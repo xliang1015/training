@@ -15,8 +15,10 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < 1024 * 1024 * 500; i++) {
 		p[i] = 123;
-		if ((i & 0xFFFFF) == 0)
+		if ((i & 0xFFFFF) == 0) {
 			printf("%dMB written\n", i >> 18);
+			usleep(100000);
+		}
 	}
 	pause();
 	return 0;
