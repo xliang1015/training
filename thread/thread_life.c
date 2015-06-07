@@ -17,13 +17,20 @@ void* thread_fun(void* param)
 
 	printf("thread pid:%d, tid:%lu\n",getpid(), pthread_self());
 	for(i=0;i<p->num;i++){
+
+#if 0 /* change to #if 1 for debugging high cpu-loading issues */
+		while(1);
+#else
 		sleep(1);
-	#if 0
+
+#if 0 /* change to #if 1 for debugging core dump */
 		if (i==10){
-		 volatile *p=0;
-		 *p=0;
+			volatile *p=0;
+			*p=0;
 		}
-	#endif
+#endif
+
+#endif
 		printf("%i: %c\n",i,p->info);
 	}
 		
