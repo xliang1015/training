@@ -65,7 +65,7 @@ int main(int argc,char* argv[])
 			}	
 
 			for(j=0;j<2;j++){
-				sleep(i);
+				sleep(i*10);
 				if(semop(semid,&acquire,1)==-1){
 					perror("cannot acquire the resource");
 					_exit(-1);
@@ -73,7 +73,7 @@ int main(int argc,char* argv[])
 
 				printf("====enter the critical section=====\n");
 				printf("---pid : % ld ---\n",(long)getpid());
-				sleep(1);
+				sleep(5);
 				printf("====leave the critical section=====\n");
 
 				if(semop(semid,&release,1)==-1){

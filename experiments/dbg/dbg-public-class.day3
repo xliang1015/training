@@ -1,11 +1,16 @@
 1. oom 
-#su
+#sudo bash
 #swapoff -a
 #echo 1 > /proc/sys/vm/overcommit_memory
 
 run: training/debug/mm/munch.c
 #dmesg
 run: training/debug/mm/mmap.c with/without marco mlockall
+
+create a memory group xxx and put munch.c to the group:
+1. sudo mkdir /sys/fs/cgroup/memory/xxx
+2. limit the memory bytes in the group
+3. sudo cgexec -g memory:xxx ./a.out
 
 2. page reclaim
 launch firefox
@@ -34,4 +39,5 @@ run: training/memory_check/valgrind
 	cat /proc/a.out-pid/smaps | more
 (2) run two ./a.out
 	cat /proc/a.out-pid/smaps | more
-and use "pmap" command
+
+7. use "pmap" command to show the memory map of a process
