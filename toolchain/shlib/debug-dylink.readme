@@ -41,14 +41,14 @@ Dump of assembler code for function main:
    0x0804851d <+41>:	leave  
    0x0804851e <+42>:	ret    
 End of assembler dump.
-(gdb) x/5i 0x8048430
-   0x8048430 <foo@plt>:	jmp    *0x804a00c
-   0x8048436 <foo@plt+6>:	push   $0x18
-   0x804843b <foo@plt+11>:	jmp    0x80483f0
-   0x8048440 <_start>:	xor    %ebp,%ebp
-   0x8048442 <_start+2>:	pop    %esi
-(gdb) x/a 0x804a00c
-0x804a00c <foo@got.plt>:	0x8048436 <foo@plt+6>
+(gdb) x/5i 0x8048430   -  plt for foo
+   0x8048430 <foo@plt>:	jmp    *0x804a00c   - got for foo
+   0x8048436 <foo@plt+6>:	push   $0x18          <-----
+   0x804843b <foo@plt+11>:	jmp    0x80483f0           |
+   0x8048440 <_start>:	xor    %ebp,%ebp                   |
+   0x8048442 <_start+2>:	pop    %esi                |
+(gdb) x/a 0x804a00c                                        |
+0x804a00c <foo@got.plt>:	0x8048436 <foo@plt+6>   ----
 (gdb) x/5i 0x80483f0
    0x80483f0:	pushl  0x8049ff8
    0x80483f6:	jmp    *0x8049ffc
@@ -57,7 +57,7 @@ End of assembler dump.
    0x8048400 <foo2@plt>:	jmp    *0x804a000
 (gdb) x/a 0x8049ffc
 0x8049ffc <_GLOBAL_OFFSET_TABLE_+8>:	0xb7ff26a0 <_dl_runtime_resolve>
-(gdb) watch *0x804a00c
+(gdb) watch *0x804a00c                     - got for foo will be "fixed"
 Hardware watchpoint 2: *0x804a00c
 (gdb) c
 Continuing.
