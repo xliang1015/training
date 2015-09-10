@@ -1,7 +1,7 @@
 1. strace/ltrace
 
 2. gdb:
-training/debug/gdb
+code path: 
 ~/develop/training/debug/gdb
 (1)gdb attach pid
 (2)gdb tui

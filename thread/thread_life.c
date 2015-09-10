@@ -18,7 +18,7 @@ void* thread_fun(void* param)
 	printf("thread pid:%d, tid:%lu\n",getpid(), pthread_self());
 	for(i=0;i<p->num;i++){
 
-#if 0 /* change to #if 1 for debugging high cpu-loading issues */
+#if  0 /* change to #if 1 for debugging high cpu-loading issues */
 		while(1);
 #else
 		sleep(1);

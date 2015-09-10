@@ -9,7 +9,13 @@ thread/thread_life.c
 
 4. run thread/thread_life.c
 run top;
+
 use chrt and taskset to change scheduler for its threads
+use renice to change the nice of normal processes:
+renice -n -6 -g pid
+
+how to run chrt, taskset:
+~/develop/training/process/tools
 
 5. 
 cgroup
@@ -21,7 +27,10 @@ change cfs quota or shares
 
 check the result
 
+--------------------------
 6.
+kernel panic:
+
 change ~develop/linux by:
  22 diff --git a/drivers/char/globalfifo/globalfifo.c b/drivers/char/globalfifo/globalfifo.c
  23 index ff3e3bf..64d553b 100644
@@ -40,6 +49,7 @@ change ~develop/linux by:
 
 use ./module.sh to compile and install the module
 boot embedded linux and read /dev/globalfifo
+-----------------------------
 
 7.
 use qemu-system-arm with "-s -S", and use arm gdb to debug embedded kernel
