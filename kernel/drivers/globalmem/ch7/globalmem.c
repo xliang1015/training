@@ -73,6 +73,7 @@ static ssize_t globalmem_read(struct file *filp, char __user * buf, size_t size,
 	if (count > GLOBALMEM_SIZE - p)
 		count = GLOBALMEM_SIZE - p;
 
+	mutex_lock(&dev->mutex);
 	if (copy_to_user(buf, dev->mem + p, count)) {
 		ret = -EFAULT;
 	} else {
