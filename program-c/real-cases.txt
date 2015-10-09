@@ -4,6 +4,9 @@ tcp/ip packet head picture
 naming/namespace:
 i2c subsystem
 every i2c controller
+FIQ/IRQ
+handle_IRQ(bool irq)
+touchpanel: get_xy()
 
 comments:
 1. sirfsoc_of_pwrc_init

@@ -9,6 +9,5 @@ int main(void)
 	int a=3;
 	float b=0.5;
 	max(a,b);
-
 	return 0;
 }
