@@ -41,3 +41,5 @@ run: training/memory_check/valgrind
 	cat /proc/a.out-pid/smaps | more
 
 7. use "pmap" command to show the memory map of a process
+
+8. splint: training/program-c/lint
