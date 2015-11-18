@@ -16,3 +16,5 @@ root@baohua-VirtualBox:~# taskset -p 02 4713
 pid 4713's current affinity mask: 3
 pid 4713's new affinity mask: 2
 
+set all threads in a.out to CPU1:
+taskset -a -p 02 `pidof a.out`
