@@ -34,11 +34,13 @@ compare the output of the two free
 5. valgrind
 run: training/memory_check/valgrind
 
+
 6.  build a a.out with while(1)
 (1) run one ./a.out
 	cat /proc/a.out-pid/smaps | more
 (2) run two ./a.out
 	cat /proc/a.out-pid/smaps | more
+
 
 7. use "pmap" command to show the memory map of a process
 

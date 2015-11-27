@@ -11,6 +11,17 @@ training/process/posix-ipc
 training/thread/deadlock
 
 6. run oprofile, perf
+training/debug/perf-sched: readme
+
+oprofile:
+# sudo opcontrol --reset
+Signalling daemon... done
+# sudo opcontrol --init
+# sudo opcontrol --start
+Profiler running.
+# sudo opcontrol --dump
+# opreport -la
+# sudo opcontrol --stop
 
 7. run lttv-gui and read lttng result: training/debug/lttng-traced-data
 
