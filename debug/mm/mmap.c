@@ -8,12 +8,17 @@
 int main(int argc, char **argv)
 {
 	volatile unsigned char *m;
+	unsigned int i;
 	/* 
 	 * important notes:
 	 * this needs sudo permission
 	 */
 	int fd = open("/dev/sda", O_RDONLY, S_IRUSR);
-	unsigned int i;
+	if (fd == -1) {
+		perror("/dev/sda open() failed, use 'sudo'\n");
+		exit(-1);
+	};
+
 #define MAP_SIZE 2048UL * 1024 * 1024
 	m = mmap(0, MAP_SIZE, PROT_READ | PROT_EXEC,
 			MAP_PRIVATE, fd, 0);
