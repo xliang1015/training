@@ -8,12 +8,12 @@ int main(int argc, char **argv)
 	int mb = 0;
 	char *buffer;
 	int i;
-
-	unsigned int *p = malloc(1024 * 1024 * 2000);
+#define SIZE 2000
+	unsigned int *p = malloc(1024 * 1024 * SIZE);
 
 	printf("malloc buffer: %p\n", p);
 
-	for (i = 0; i < 1024 * 1024 * 500; i++) {
+	for (i = 0; i < 1024 * 1024 * (SIZE/sizeof(int)); i++) {
 		p[i] = 123;
 		if ((i & 0xFFFFF) == 0) {
 			printf("%dMB written\n", i >> 18);
