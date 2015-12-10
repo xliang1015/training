@@ -54,3 +54,11 @@ boot embedded linux and read /dev/globalfifo
 7.
 use qemu-system-arm with "-s -S", and use arm gdb to debug embedded kernel
 
+shell1:
+~/develop/linux/extra/ run-nolcd.sh or run-lcd.sh
+
+shell2:
+cd ~/develop/linux
+arm-linux-gnueabihf-gdb vmlinux
+# target remote :1234
+
