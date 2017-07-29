@@ -6,7 +6,7 @@ run: training/debug/mm/munch.c
 #dmesg
 
 ---------------
-run: training/debug/mm/mmap.c with/without marco mlockall
+run: training/debug/mm/mmap.c with/without marco mlockall (sudo/root)
 
 create a memory group xxx and put munch.c to the group:
 	(1). sudo mkdir /sys/fs/cgroup/memory/xxx
@@ -36,7 +36,7 @@ compare the output of the two free
 
 4. smem
 	$ smem
-	$ smem --pie=comand
+	$ smem --pie=command
 	$ smem --bar=command
 
 -------------
