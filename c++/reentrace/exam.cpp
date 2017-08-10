@@ -19,7 +19,7 @@ struct MyStruct
    }
 } ;
 
-truct MyStruct
+struct MyStruct
 {
    size_t  c ;
    P *     p ;
