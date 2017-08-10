@@ -10,10 +10,15 @@ public:
 	{
 		this->m_strCmdName = cmdName;
 	}
+	bool operator==(const string &s)
+	{
+	return s==m_strCmdName;
+	}
+	/*
 	string GetName()
 	{
 		return m_strCmdName;
-	}
+	}*/
 	virtual int Run()= 0;
 };
 

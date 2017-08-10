@@ -12,7 +12,7 @@ int CShell::ParseCmd(string name)
 	while(iter != cmdlist->end())  
 	{  
 		CCmd* cmd = *iter;
-		if (name == cmd->GetName()) {
+		if (*cmd==name/*->GetName()*/) {
 			cout << "supported command" << endl;
 			cmd->Run();
 			break;  
