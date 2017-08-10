@@ -10,6 +10,8 @@ len = . - msg
 .globl _start
 _start:
     /* syscall write(int fd, const void *buf, size_t count) */
+    /* write(1, "Hello, ARM\n", 10); -> printf("hello arm\n"); */
+
     mov     %r0, $1     /* fd -> stdout */
     ldr     %r1, =msg   /* buf -> msg */
     ldr     %r2, =len   /* count -> len(msg) */
