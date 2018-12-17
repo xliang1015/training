@@ -10,7 +10,10 @@ b. 子进程被kill，父进程不wait；观察僵尸进程
 training/thread/thread_life.c   "-pthread"
 用strace跟踪程序的运行
 
+clone(.....)
+
 4. kernel thread
+~/develop/linux
 在第一天的hello模块的module_init中启动一个kernel thread
 
  #include <linux/init.h>
@@ -38,7 +41,7 @@ training/thread/thread_life.c   "-pthread"
         return 0;
  }
 
-5. 观察buddyinfo和slabinfo(pcduino3和电脑上)
+5. 观察buddyinfo和slabinfo(电脑上)
 cat /proc/buddyinfo
 cat /proc/slabinfo
 

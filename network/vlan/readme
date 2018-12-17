@@ -1,0 +1,10 @@
+modprobe 8021q
+#vconfig add [interface-name] [vlan_id]
+vconfig add eth0 5
+#remove vlan
+#vconfig rem eth0.5
+ifconfig eth0.5
+ifconfig eth0.5 192.168.1.100 netmask 255.255.255.0 broadcast 192.168.1.255 up
+cat /proc/net/vlan/eth0.5
+ifconfig eth0.5 down
+

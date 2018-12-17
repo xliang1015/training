@@ -1,0 +1,33 @@
+[   28.124107] BUG: soft lockup - CPU#0 stuck for 23s! [init:1]
+[   28.124720] Modules linked in:
+[   28.125247] Supported: Yes
+[   28.125763] Modules linked in:
+[   28.126277] Supported: Yes
+[   28.126774] 
+[   28.127264] Pid: 1, comm: init Not tainted 3.0.101-63-xen #1  
+[   28.127765] EIP: 0061:[<c00ded0a>] EFLAGS: 00000202 CPU: 0
+[   28.128002] EIP is at handle_mm_fault+0x18a/0x2b0
+[   28.128002] EAX: 0002bfc1 EBX: 00000000 ECX: 00000000 EDX: 00000000
+[   28.128002] ESI: 2bfc1067 EDI: 00000000 EBP: ebfc6200 ESP: ebc35d48
+[   28.128002]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: e021
+[   28.128002] Process init (pid: 1, ti=ebc08000 task=ebc32ce0 task.ti=ebc34000)
+[   28.128002] Stack:
+[   28.128002]  ebfc1778 ebfc6200 00000029 0002bfc1 00000000 080efc90 ebfc2570 ebfc9e40
+[   28.128002]  ec7bd000 ebc35dfc 00000003 ebfc2570 080efc90 c0350ad4 00000029 00000100
+[   28.128002]  00000008 00000003 ebfc9e78 ebc32ce0 ebfc9e40 00000000 00000029 00000003
+[   28.128002] Call Trace:
+[   28.128002]  [<c0350ad4>] do_page_fault+0x1f4/0x4b0
+[   28.128002]  [<c034df54>] error_code+0x30/0x38
+[   28.128002]  [<c01da35f>] clear_user+0x2f/0x50   
+[   28.128002]  [<c01480d4>] load_elf_binary+0xae4/0xc30    
+[   28.128002]  [<c01094d1>] search_binary_handler+0x1e1/0x2e0  
+[   28.128002]  [<c01097b4>] do_execve_common+0x1e4/0x280   
+[   28.128002]  [<c000a9c2>] sys_execve+0x52/0x80   
+[   28.128002]  [<c035443e>] ptregs_execve+0x12/0x18    
+[   28.128002]  [<c034dc3d>] syscall_call+0x7/0x7   
+[   28.128002]  [<c000933f>] kernel_execve+0x1f/0x30    
+[   28.128002]  [<c000424e>] init_post+0xde/0x130   
+[   28.128002]  [<c057d638>] kernel_init+0x160/0x18f    
+[   28.128002]  [<c0354526>] kernel_thread_helper+0x6/0x10  
+[   28.128002] Code: 89 f2 89 f8 81 e2 00 f0 ff ff 25 ff 0f 00 00 89 54 24 0c 89 44 24 10 8b 44 24 0c 8b 54 24 10 0f ac d0 0c 89 44 24 0c 8b 44 24 0c <c1> ea 0c 89 54 24 10 c1 e0 05 03 44 24 20 e8 b3 90 ff ff 8b 54 
+......

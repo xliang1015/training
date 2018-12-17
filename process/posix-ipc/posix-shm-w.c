@@ -39,5 +39,6 @@ int main(int argc, char **argv)
 	memset(rptr->buf, 0, MAX_LEN);
 	rptr->len=1000;
 	strcpy(rptr->buf, "hello world");
+	while(1);
 }
 

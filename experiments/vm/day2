@@ -27,6 +27,8 @@ compare the output of the two free
 $ sudo swapoff -a
 $ sudo sh -c 'echo 1 > /proc/sys/vm/overcommit_memory'
 
+firefox.....
+
 run: training/debug/mm/munch.c
 #dmesg
 

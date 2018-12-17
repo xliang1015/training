@@ -1,5 +1,5 @@
 TN:test
-SF:/home/baohua/develop/training/gcov/test.c
+SF:/home/baohua/develop/training/toolchain/gcov/test.c
 FN:3,main
 FNDA:1,main
 FNF:1

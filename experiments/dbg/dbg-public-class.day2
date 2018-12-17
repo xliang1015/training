@@ -1,5 +1,5 @@
 1. fork/vfork
-training/process/fork
+training/process/fork(main.c, vfork.c, fork_child.c)
 
 2. time 
    \time

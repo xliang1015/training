@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <arm_neon.h>	//need to include this ifyou want to use intrinsics
 
-float g(float const *a)
+float gfunc(float const *a)
 {
 	float r = 0;
 	int i;
@@ -79,5 +79,5 @@ int main(){
 	printf( "Lane %d: %d\n", i, result );
 
 	float vec_ans[32]={1.1,1.1,1.3,1.2,1.1,1.1,1.3,1.2,1.1,1.1,1.3,1.2,1.1,1.1,1.3,1.2};
-	printf("%f\n", g(vec_ans));
+	printf("%f\n", gfunc(vec_ans));
 }

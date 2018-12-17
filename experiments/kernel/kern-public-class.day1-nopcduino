@@ -1,0 +1,21 @@
+1. strace/ltrace
+写一个最简单的有printf类似的程序，用strace/ltrace跟踪
+
+2. 理解Linux kernel/module的编译过程
+~/develop/linux/build.sh
+~/develop/linux/module.sh
+
+hello(built-in, module)
+~/develop/linux/extra/run-nolcd.sh...
+
+3. 学会使用gdbserver gdb
+	a.~/develop/training/debug/gdb
+	b.~/develop/training/thread/deadlock.c (attach)
+	c.~/develop/training/debug/core-dump
+
+4. 在板子内核源代码(~/develop/linux)下面的drivers/misc添加一个hello.c, 并修改Kconfig和Makefile
+
+5. 跑fork/vfork的例子(路径~/develop/training/process/fork)
+main.c fork_child.c vfork.c
+
+

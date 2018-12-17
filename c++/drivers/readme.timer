@@ -1,0 +1,43 @@
+
+#define TE 0x01
+#define TICKS_PER_SEC 50000000
+
+Here, TE is a bit mask corresponding to the enable bit in the TMOD register. The mask is an implementation detail useful only to code that can access TMOD, but TMOD is a private member of the timer_registers class. Therefore, TE should also be a private member of timer_registers.
+
+Unfortunately, macro names don't observe the usual scope rules of C++ (or C). Even if you place the macro definition inside the curly braces of a function or class definition, as in:
+
+
+class timer_registers
+    {
+public:
+    ~~~
+private:
+    #define TE 0x01
+    device_register TMOD;
+    device_register TDATA;
+    device_register TCNT;
+    };
+
+the name TE will still be effectively global. 
+
+
+#define TE 0x01
+#define TICKS_PER_SEC 50000000
+
+Here, TE is a bit mask corresponding to the enable bit in the TMOD register. The mask is an implementation detail useful only to code that can access TMOD, but TMOD is a private member of the timer_registers class. Therefore, TE should also be a private member of timer_registers.
+
+Unfortunately, macro names don't observe the usual scope rules of C++ (or C). Even if you place the macro definition inside the curly braces of a function or class definition, as in:
+
+
+class timer_registers
+    {
+public:
+    ~~~
+private:
+    #define TE 0x01
+    device_register TMOD;
+    device_register TDATA;
+    device_register TCNT;
+    };
+
+the name TE will still be effectively global. 

@@ -1,4 +1,5 @@
 1. strace/ltrace
+-T 
 
 2. gdb:
 code path: 
@@ -7,7 +8,7 @@ code path:
 (2)gdb tui
 (3)gdb call functions
 (4)gdb debug multithreads:
-	training/thread/thread_life.c
+	training/thread/thread_life.c(if 0/1)
 (5)ddd
 (6)strip, objdump and gdb
 

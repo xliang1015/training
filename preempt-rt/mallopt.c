@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 	int i;
 
 	if (!mlockall(MCL_CURRENT | MCL_FUTURE))
-		mallopt(M_TRIM_THRESHOLD, -1);
+		mallopt(M_TRIM_THRESHOLD, -1UL);
 	mallopt(M_MMAP_MAX, 0);
 
 	buffer = malloc(SOMESIZE);

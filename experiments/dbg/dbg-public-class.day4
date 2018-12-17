@@ -1,4 +1,4 @@
-1. debug multi-thread by gdb: training/thread/thread_life.c
+//1. debug multi-thread by gdb: training/thread/thread_life.c
 
 2. stack overflow: training/thread/stack_overflow.c
 
@@ -27,7 +27,7 @@ Profiler running.
 # opreport -la
 # sudo opcontrol --stop
 
-7. run lttv-gui and read lttng result: training/debug/lttng-traced-data
+7. run lttv-gui and read lttng result: training/debug/lttng-traced-data/2.6.38.....
 
 8. run sar, top, iostat, iotop
 

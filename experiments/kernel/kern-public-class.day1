@@ -1,8 +1,9 @@
 1. strace/ltrace
-写一个最简单的有printf类似的程序，用strace/lstrace跟踪
+写一个最简单的有printf类似的程序，用strace/ltrace跟踪
 
 2. 学会使用pcduino3
 串口连接（kermit）；    c, ctrl \ c, exit
+ifconfig eth0 192.168.100.100 up
 网口连接(板子和PC直连)；  scp,ssh
 观察根文件系统； 
 
@@ -68,5 +69,6 @@ index d8a7579..d5c084f 100644
 并放到板子上去跑。
 
 5. 跑fork/vfork的例子(路径~/develop/training/process/fork)
+main.c fork_child.c vfork.c
 
 

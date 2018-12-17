@@ -4,11 +4,11 @@ using namespace std;
 
 class Box
 {
-   public:
       double length;         // 长度
       double breadth;        // 宽度
       double height;         // 高度
 
+   public:
       // 成员函数声明
       double getVolume(void);
       void setLength( double len );

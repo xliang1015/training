@@ -4,6 +4,7 @@
 	    (void) (&_x == &_y);        \
 	    _x > _y ? _x : _y; })
 
+
 int main(void)
 {
 	int a=3;

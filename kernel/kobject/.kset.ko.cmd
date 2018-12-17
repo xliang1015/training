@@ -1,0 +1,1 @@
+cmd_/home/baohua/develop/training/kernel/kobject/kset.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/baohua/develop/training/kernel/kobject/kset.ko /home/baohua/develop/training/kernel/kobject/kset.o /home/baohua/develop/training/kernel/kobject/kset.mod.o

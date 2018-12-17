@@ -9,9 +9,9 @@
 #include <sched.h>
 
 #define USE_PRI_INHERIT /* high-priority task only wait LOW_SPIN time */
-//#if 1
-//#undef USE_PRI_INHERIT /* high-priority task wait LOW+MID_SPIN time */
-//#endif
+#if 1
+#undef USE_PRI_INHERIT /* high-priority task wait LOW+MID_SPIN time */
+#endif
 
 /*
    A simple demonstration of a 3-thread priority inversion that can

@@ -1,7 +1,7 @@
 KVERS = $(shell uname -r)
 
 # Kernel modules
-obj-m += kobj.o
+obj-m += kobj.o kset.o
 
 # Specify flags for the module compilation.
 #EXTRA_CFLAGS=-g -O0
